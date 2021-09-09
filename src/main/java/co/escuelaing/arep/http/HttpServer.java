@@ -1,14 +1,21 @@
-package main.java.co.escuelaing.arep.http;
+package co.escuelaing.arep.http;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import co.escuelaing.arep.service.CalcService;
 
 public class HttpServer {
     private static HttpServer _instance = new HttpServer();
 
-    private static HashMap<String,String> paths;
-
-    private HttpServer(){
-        paths=new HashMap<>();
-        paths.put("/parcial", "application/json");
-    }
+    private HttpServer(){}
 
     private static HttpServer getInstance(){
         return _instance;
@@ -22,7 +29,6 @@ public class HttpServer {
     }
 
     public String makeResponse(String path,String number){
-        //System.out.println(type);
         return "HTTP/1.1 200 OK\r\n"
         + "Content-Type: "+"application/json"+"\r\n"
         + "\r\n"+CalcService.calc(path.replace("/", ""), number);
@@ -40,12 +46,17 @@ public class HttpServer {
         List<String> headers = new ArrayList<String>();
         while ((inputLine = in.readLine()) != null) {
             if(method.isEmpty()){
-                String[] requestString = inputLine.split(" ");
-                String[] res = requestString[1].split("\\?");
-                method= requestString[0];
-                path = res[0];
-                version = requestString[2];
-                param = res[1].split("=")[1];
+                try{
+                    String[] requestString = inputLine.split(" ");
+                    String[] res = requestString[1].split("\\?");
+                    method= requestString[0];
+                    path = res[0];
+                    version = requestString[2];
+                    param = res[1].split("=")[1];
+                }catch(Exception e){
+                    path="error";
+                    param="error";
+                }
                 //System.out.println("Request: "+ method + " "+path+" "+version);
             }else{
                 //System.out.println("Header: "+inputLine);
