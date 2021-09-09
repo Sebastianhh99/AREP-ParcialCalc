@@ -31,7 +31,8 @@ public class HttpServer {
     public String makeResponse(String path,String number){
         return "HTTP/1.1 200 OK\r\n"
         + "Content-Type: "+"application/json"+"\r\n"
-        + "\r\n"+CalcService.calc(path.replace("/", ""), number);
+        + "Access-Control-Allow-Origin: *"+"\r\n"
+        + "\r\n"+" "+CalcService.calc(path.replace("/", ""), number);
     }
 
     public void processResponse(Socket clientSocket) throws IOException{
